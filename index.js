@@ -4,6 +4,8 @@ const express = require('express')
 const app = express()
 
 app.use(express.json())
+express.urlencoded({ extended: true })
+app.use(express.static('paginas'))
 
 const supabaseUrl = 'https://kjialgvzeyiumflpxgrv.supabase.co'
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtqaWFsZ3Z6ZXlpdW1mbHB4Z3J2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzE5NDk3NTEsImV4cCI6MjA0NzUyNTc1MX0.whvKZeHLM6KaU87dEHNOEyqYNKZB_ne3orjBiACDH-A'
@@ -62,6 +64,70 @@ app.get('/listar', async (req, res) => {
     } catch (error) {
         console.log('Erro ao listar os carros:', error)
         res.json({ mensagem: 'Erro ao listar os carros!' })
+    }
+})
+
+app.get('/carros2', async (req, res) => {
+    try {
+
+        const { data, error } = await supabase
+            .from('carro')
+            .select('*')
+
+        if (error) {
+            throw error
+        }
+
+        const listaItens = data.map(item => {
+            return `
+                <tr>
+                    <td>${item.marca}</td>
+                    <td>${item.nome}</td>
+                    <td>${item.ano}</td>
+                </tr>
+            `
+        }).join('')
+
+        const htmlPagina = `
+            <!DOCTYPE html>
+                <html lang="pt-br">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Lista de carros</title>
+                </head>
+                <body>
+                    <h1>Lista de carros</h1>
+                    <table id="tabelaCarros">
+                        <thead>
+                            <tr>
+                                <th>Marca</th>
+                                <th>Nome</th>
+                                <th>Ano</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${listaItens}
+                        </tbody>
+                    </table>
+                </body>
+                </html>
+        `
+
+        res.send(htmlPagina)
+
+    } catch (error) {
+        res.json({ mensagem: 'Erro ao listar os carros!', erro: error })
+    }
+})
+
+app.get('/carros', async (req, res) => {
+    try {
+
+        res.sendFile(__dirname + '/paginas/lista.html')
+
+    } catch (error) {
+        res.json({ mensagem: 'Erro ao listar os carros!', erro: error })
     }
 })
 
