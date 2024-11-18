@@ -6,6 +6,7 @@ const app = express()
 app.use(express.json())
 express.urlencoded({ extended: true })
 app.use(express.static('paginas'))
+app.use('/paginas', express.static(__dirname + '/paginas'))
 
 const supabaseUrl = 'https://kjialgvzeyiumflpxgrv.supabase.co'
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtqaWFsZ3Z6ZXlpdW1mbHB4Z3J2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzE5NDk3NTEsImV4cCI6MjA0NzUyNTc1MX0.whvKZeHLM6KaU87dEHNOEyqYNKZB_ne3orjBiACDH-A'
